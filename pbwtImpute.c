@@ -1141,8 +1141,7 @@ static PBWT *referenceImpute3 (PBWT *pOld, PBWT *pRef, PBWT *pFrame,
   if (pOld == pFrame)		/* self-imputing - no sparse option yet */
     matchMaximalWithin (pFrame, reportMatch) ;
   else
-    matchSequencesSweep (pFrame, pOld, reportMatch) ;
-    //matchSequencesSweepSparse (pFrame, pOld, nSparse, reportMatchSparse) ;
+    matchSequencesSweepSparse (pFrame, pOld, nSparse, reportMatchSparse) ;
 
   for (j = 0 ; j < pOld->M ; ++j)	/* add terminating element to arrays */
     { if (nSparse > 1) /* can't guarantee order of sparse segments */
@@ -1239,13 +1238,7 @@ static PBWT *referenceImpute3 (PBWT *pOld, PBWT *pRef, PBWT *pFrame,
 	}
 	  
       for (j = 0 ; j < pOld->M ; ++j) uNew->y[j] = x[uNew->a[j]] ; /* transfer to uNew */
-      /* need to sort the dosages into uNew cursor order as well */
-      for (j = 0 ; j < pOld->M ; ++j) 
-      {
-        /* make sure the dosages of the typed markers are {0,1} */
-        if ( arrp(pRef->sites,kRef,Site)->isImputed!=TRUE && !missing[uNew->a[j]] ) yDosage[j] = x[uNew->a[j]] ? 1 : 0;
-        else yDosage[j] = xDosage[uNew->a[j]] ;
-      }
+      for (j = 0 ; j < pOld->M ; ++j) yDosage[j] = xDosage[uNew->a[j]] ; /* need to sort the dosages into uNew cursor order as well */
       pbwtDosageStore (pNew, yDosage, kRef) ;
       pbwtCursorWriteForwards (uNew) ;
       
